@@ -1,0 +1,25 @@
+Package: SEMA
+Type: Package
+Title: Streaming Expectation Maximization Approximation 
+Version: 0.1.0
+Authors@R: person("Lianne", "Ippel", email = "g.j.e.ippel@gmail.com",
+  role = c("aut", "cre"))
+Maintainer: The package maintainer <g.j.e.ippel@gmail.com>
+Description: The SEMA algorithm fits multilevel models in the context of 
+    streaming data (a.k.a. data streams). Using online learning, the model is 
+    updated a data point at the time. SEMA algorithm only stores summarizing 
+    statistics, which limits memory usage, and because it never returns to the 
+    data, sema algorithm is computationally efficient. The current state of the
+    algorithm is able to fit multilevel models with fixed and random effects. 
+License: GPL-2 | GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    plyr, 
+    stats,
+    stringr
+RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr

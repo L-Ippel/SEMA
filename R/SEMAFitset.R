@@ -1,0 +1,105 @@
+#' Fit multilevel models in a data stream II
+#'  
+#' @description Fit multilevel models in a data stream, without managing units' 
+#'   objects lists, 
+#'
+#' @details This function fits the multilevel models in a data stream, similar
+#'   to \code{\link{sema_fit_one}}. However, while \code{\link{sema_fit_one}}
+#'   does not manage the storage and retrieval of units' objects, this 
+#'   function does, which makes this function more user-friendly. 
+#'   The function requires an id label, to retrieve the corresponding unit's
+#'   parameters, a vector with the data of the fixed effects covariates, a 
+#'   vector with the data of the random effects covariates, the response or 
+#'   dependent variable and the current state of the model parameters, 
+#'   including the lists with the units' objects. Currently the algorithm  
+#'   fits models including fixed effects at level 1 and 2 and random intercepts
+#'   and slopes for continuous outcomes.
+#' @seealso \code{\link{sema_fit_one}}, \code{\link{sema_fit_df}},
+#' \code{\link{summary_sema}}, \code{\link{sema_ranef}},
+#'   \code{\link{sema_store_resid_var}}, \code{\link{sema_store_random_var}}, 
+#'   \code{\link{sema_store_fixed_coef}}
+#'
+#' @param data_fixed A vector with the data of the fixed effects covariates.
+#' @param data_random A vector with the data of the random effects covariates.
+#' @param data_y A scalar with the response of this unit.
+#' @param id A scalar which identifies the unit of this data point.
+#' @param theta_list Alist consisting of 'theta', which is a list with all model
+#'   parameters and global sufficient statistics; 'id_vector' which is a vector
+#'   containig all id labels; and 'theta_j' which is a list of lists containing
+#'   all units parameters and contributions to the sufficient statistics. This
+#'   list is automatically generated.
+#' @param print The default is FALSE, if TRUE the function
+#'   prints a summary of the model.  
+#' @param start_resid_var A scalar, optional if the user wants to provide a
+#'   start value of the residual variance, default start value is 1.
+#' @param start_random_var A vector, optional if the user wants to provide a
+#'   start values of the variance of the random effects covariates, default
+#'   start value is 1. NOTE, if start values are provided make sure that the
+#'   length of the vector of start values matches the number of random effects.
+#' @param start_fixed_coef A vector, optional if the user wants to provide
+#'   start values of the fixed effects, default is set to NULL such that
+#'   \code{sema_fit_one} creates the vector of start values matching the number
+#'   of fixed effects. NOTE, if start values are provided make sure that the
+#'   length of the vector of start values matches the number of fixed effects.
+#' @param prior_n If starting values are provided, prior_n determines the weight
+#'   of the starting value of the residual variance, default is 0.
+#' @param prior_j If starting values are provided, prior_j determines the weight
+#'   of the starting value of the variance of the random effects and the fixed
+#'   effects, default is 0.
+#' @keywords online multilevel models method fitting stream
+#' @export
+#' @return A list with updated global parameters, a vector with id labels
+#'   and a list with lists of all units parameters and contributions.
+
+
+sema_fit_set <- function(data_fixed,
+                         data_random,
+                         data_y,
+                         id,
+                         theta_list =
+                           list("theta" =
+                                  create_theta_main(n_fixed =
+                                                      length(data_fixed),
+                                                    n_random =
+                                                      length(data_random)),
+                                "id_vector" = c(),
+                                "theta_j" = NULL),
+                         print            = FALSE,
+                         start_resid_var  = 1,
+                         start_random_var = 1,
+                         start_fixed_coef = NULL,
+                         prior_n          = 0,
+                         prior_j          = 0){
+  if(is.null(start_fixed_coef)){
+    start_fixed_coef <- matrix(1, nrow = length(data_fixed))
+  }
+  if(is.null(theta_list$id_vector)){
+    theta_list$id_vector   <- c()
+    theta_list$unit        <- list()
+    class(theta_list$unit) <- c("list", "sema")
+  }
+  if(is.element(id, theta_list$id_vector)){
+    temp_id                <- which(id == theta_list$id_vector)
+    temp_theta_j           <- theta_list$unit[[temp_id]]
+  }
+  if(!is.element(id, theta_list$id_vector)){
+    theta_list$id_vector <- c(theta_list$id_vector, id)
+    temp_id              <- match(id, theta_list$id_vector)
+    temp_theta_j         <- NULL
+  }
+  res <- sema_fit_one(data_fixed       = as.numeric(data_fixed),
+                      data_random      = as.numeric(data_random),
+                      data_y           = data_y,
+                      id               = id,
+                      theta_j          = temp_theta_j,
+                      theta            = theta_list$model,
+                      print            = print,
+                      start_resid_var  = start_resid_var,
+                      start_random_var = start_random_var,
+                      start_fixed_coef = start_fixed_coef,
+                      prior_n          = prior_n,
+                      prior_j          = prior_j)
+  theta_list$unit[[temp_id]] <- res$unit
+  theta_list$model           <- res$model
+  return(theta_list)
+}
