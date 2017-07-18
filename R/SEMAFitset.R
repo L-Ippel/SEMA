@@ -15,9 +15,9 @@
 #'   fits models including fixed effects at level 1 and 2 and random intercepts
 #'   and slopes for continuous outcomes.
 #' @seealso \code{\link{sema_fit_one}}, \code{\link{sema_fit_df}},
-#' \code{\link{summary_sema}}, \code{\link{sema_ranef}},
-#'   \code{\link{sema_store_resid_var}}, \code{\link{sema_store_random_var}}, 
-#'   \code{\link{sema_store_fixed_coef}}
+#' \code{\link{summary_sema}}, \code{\link{ranef}},
+#'   \code{\link{store_resid_var}}, \code{\link{store_random_var}}, 
+#'   \code{\link{store_fixed_coef}}
 #'
 #' @param data_fixed A vector with the data of the fixed effects covariates.
 #' @param data_random A vector with the data of the random effects covariates.
@@ -76,7 +76,7 @@ sema_fit_set <- function(data_fixed,
   if(is.null(theta_list$id_vector)){
     theta_list$id_vector   <- c()
     theta_list$unit        <- list()
-    class(theta_list$unit) <- c("list", "sema")
+    class(theta_list$unit) <- c("list")
   }
   if(is.element(id, theta_list$id_vector)){
     temp_id                <- which(id == theta_list$id_vector)
@@ -87,6 +87,7 @@ sema_fit_set <- function(data_fixed,
     temp_id              <- match(id, theta_list$id_vector)
     temp_theta_j         <- NULL
   }
+  class(theta_list) <- c("list", "sema")
   res <- sema_fit_one(data_fixed       = as.numeric(data_fixed),
                       data_random      = as.numeric(data_random),
                       data_y           = data_y,

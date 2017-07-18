@@ -11,8 +11,8 @@
 #' @keywords prediction
 
 
-sema_predict	<- function(theta,
-                         theta_j,
+predict	<- function(theta = get_theta(),
+                         theta_j = get_theta_j(),
                          data_fixed,
                          data_random){
   if(is.null(theta_j)){
@@ -23,3 +23,12 @@ sema_predict	<- function(theta,
              data_random %*% theta_j$random_coef)
   }
 }
+
+get_theta <- function(model){
+  return(model$model)
+}
+
+get_theta_j <- function(model, id){
+  return(model$unit[[id]])
+}
+

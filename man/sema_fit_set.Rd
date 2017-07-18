@@ -72,9 +72,9 @@ This function fits the multilevel models in a data stream, similar
 }
 \seealso{
 \code{\link{sema_fit_one}}, \code{\link{sema_fit_df}},
-\code{\link{summary_sema}}, \code{\link{sema_ranef}},
-  \code{\link{sema_store_resid_var}}, \code{\link{sema_store_random_var}}, 
-  \code{\link{sema_store_fixed_coef}}
+\code{\link{summary_sema}}, \code{\link{ranef}},
+  \code{\link{store_resid_var}}, \code{\link{store_random_var}}, 
+  \code{\link{store_fixed_coef}}
 }
 \keyword{fitting}
 \keyword{method}

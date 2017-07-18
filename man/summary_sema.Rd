@@ -28,9 +28,9 @@ The output of the sema_fit functions are usually large, and
   of the updated model parameters every X data points.
 }
 \seealso{
-\code{\link{sema_store_fixed_coef}}, 
-   \code{\link{sema_store_random_var}}, \code{\link{sema_store_resid_var}}, 
-   \code{\link{sema_ranef}}
+\code{\link{store_fixed_coef}}, 
+   \code{\link{store_random_var}}, \code{\link{store_resid_var}}, 
+   \code{\link{ranef}}
 }
 \keyword{model}
 \keyword{sema}

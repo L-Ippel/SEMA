@@ -14,7 +14,7 @@
 #'   \item \code{\link{build_theta_j}}: creates all objects at the unit level.
 #'   \item \code{\link{create_theta_main}}: allows users to include own start 
 #'     values.
-#'   \item \code{\link{is_sema}}: checks whether list is sema class.
+#'   \item \code{\link{is.sema}}: checks whether list is sema class.
 #'   \item \code{\link{sema_fit_df}}: Fits multilevel models, input a 
 #'     data.frame, returns model parameters, units' parameters, and optional, 
 #'     stores the model parameters during the updating process.   
@@ -23,15 +23,15 @@
 #'   \item \code{\link{sema_fit_set}}: Fits multilevel models, input one data
 #'     vector, returns updated model parameters and a list with all units' 
 #'     parameters, one of them updated. 
-#'   \item \code{\link{sema_predict}}: predicts outcome based on the data of 
+#'   \item \code{\link{predict}}: predicts outcome based on the data of 
 #'     the covariates.
-#'   \item \code{\link{sema_ranef}}: returns a data frame with coefficients of
+#'   \item \code{\link{ranef}}: returns a data frame with coefficients of
 #'     the random effects.
-#'   \item \code{\link{sema_store_fixed_coef}}: stores the estimates of the 
+#'   \item \code{\link{store_fixed_coef}}: stores the estimates of the 
 #'     fixed effects coefficients.
-#'   \item \code{\link{sema_store_random_var}}: stores the estimates of the 
+#'   \item \code{\link{store_random_var}}: stores the estimates of the 
 #'     variance of the random effects. 
-#'   \item \code{\link{sema_store_resid_var}}: stores the estimate of residual 
+#'   \item \code{\link{store_resid_var}}: stores the estimate of residual 
 #'     variance coefficients 
 #'   \item \code{\link{summary_sema}}: returns a list with the number of 
 #'     units, number of observations, estimates of the fixed effects 

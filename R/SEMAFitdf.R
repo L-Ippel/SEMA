@@ -74,11 +74,22 @@ sema_fit_df <- function(formula,
                                      simplify = T)
   temp  <- stringr::str_split(temp_formula[2], stringr::fixed(" + "),
                               simplify = T)
-  temp_random  <- c(temp[1, 1:(ncol(temp) - 1)],
+  
+  if(ncol(temp)==1){
+    temp_random <- stringr::str_split(temp[, ncol(temp)], 
+                                                      stringr::fixed(" | "),
+                                                      simplify = T)[1]
+  }
+  if(ncol(temp)!=1){
+    temp_random  <- c(temp[1, 1:(ncol(temp) - 1)],
                     stringr::str_split(temp[, ncol(temp)], 
                                        stringr::fixed(" | "),
                                        simplify = T)[1])
-
+  }
+  if(temp_random[1] == 1 | temp_fixed[1] == 1){
+    data_frame$intercept <- 1
+    temp_random[1] <- temp_fixed[1] <- "intercept"
+  }
   fixed_covar <- match(temp_fixed[, 1:(ncol(temp_fixed) - 1)],
                        names(data_frame))
   random_covar <- match(temp_random, names(data_frame))
@@ -91,7 +102,7 @@ sema_fit_df <- function(formula,
   }
   if(intercept == TRUE){
     data_fixed_df  <- data_frame[, fixed_covar]
-    data_random_df <- data_frame[, random_covar]
+    data_random_df <- as.data.frame(data_frame[, random_covar])
     if(data_fixed_df[1, 1] != 1){
       stop("first column should be intercept, check whether
           intercept == TRUE is correctly specified or change
@@ -141,26 +152,31 @@ sema_fit_df <- function(formula,
     
     id_records[[temp_id]]	<- res$unit
     if(!is.na(store_every) & res$model$n %% store_every == 0){
-      fixed_coef[res$model$n / store_every, ] <- sema_store_fixed_coef(
-        sema_model = res$model)
-      random_var[res$model$n / store_every, ] <- sema_store_random_var(
-        sema_model = res$model)
-      resid_var[res$model$n / store_every, ] <-  sema_store_resid_var(
-        sema_model = res$model)
+      fixed_coef[res$model$n / store_every, ] <- store_fixed_coef(
+        object = res$model)
+      random_var[res$model$n / store_every, ] <- store_random_var(
+        object = res$model)
+      resid_var[res$model$n / store_every, ] <-  store_resid_var(
+        object = res$model)
     }
   }
   if(!is.na(store_every)){ 
     names(fixed_coef) <- c("n", temp_fixed[, 1:(ncol(temp_fixed) - 1)])
     names(random_var) <- c("n", temp_random)
     names(resid_var)  <- c("n", "residual_variance")
-    return(list("model"         = res$model,
-              "unit"          = id_records,
-              "fixed_coef_df" = fixed_coef,
-              "random_var_df" = random_var,
-              "resid_var_df"  = resid_var))
+    
+    final <- list("formula"       = formula,
+                  "model"         = res$model,
+                  "unit"          = id_records,
+                  "fixed_coef_df" = fixed_coef,
+                  "random_var_df" = random_var,
+                  "resid_var_df"  = resid_var)
   } 
   else{
-    return(list("model"         = res$model,
-                "unit"          = id_records))
+    final <- list("formula"       = formula,
+                  "model"         = res$model,
+                  "unit"          = id_records)
   }
+  class(final) <- c("list","sema")
+  return(final)
 }

@@ -49,7 +49,6 @@ create_theta_main <- function(n_fixed,
                               prior_n,
                               prior_j){
   theta        <- list()
-  class(theta) <- c("list", "sema")
 
   theta$fixed_coef_hat  <- start_fixed_coef
   theta$t1	            <- start_fixed_coef * prior_j
@@ -98,13 +97,13 @@ try_theta <- function(theta,
                       prior_n,
                       prior_j){
   if(!is.list(theta)){
-    return(theta = create_theta_main(n_fixed          = n_fixed,
-                                     n_random         = n_random,
-                                     start_resid_var  = start_resid_var,
-                                     start_random_var = start_random_var,
-                                     start_fixed_coef = start_fixed_coef,
-                                     prior_n          = prior_n,
-                                     prior_j          = prior_j))
+    return(create_theta_main(n_fixed          = n_fixed,
+                             n_random         = n_random,
+                             start_resid_var  = start_resid_var,
+                             start_random_var = start_random_var,
+                             start_fixed_coef = start_fixed_coef,
+                             prior_n          = prior_n,
+                             prior_j          = prior_j))
   }
   else{
     return(theta)

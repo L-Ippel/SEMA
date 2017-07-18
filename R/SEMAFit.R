@@ -13,9 +13,9 @@
 #'   parameters. This function is also used in \code{\link{sema_fit_set}} and
 #'   \code{\link{sema_fit_df}}. 
 #' @seealso \code{\link{sema_fit_set}}, \code{\link{sema_fit_df}},
-#' \code{\link{summary_sema}}, \code{\link{sema_ranef}},
-#'   \code{\link{sema_store_resid_var}}, \code{\link{sema_store_random_var}}, 
-#'   \code{\link{sema_store_fixed_coef}}
+#' \code{\link{summary_sema}}, \code{\link{ranef}},
+#'   \code{\link{store_resid_var}}, \code{\link{store_random_var}}, 
+#'   \code{\link{store_fixed_coef}}
 #'
 #' @param data_fixed A vector with the data of the fixed effects covariates.
 #' @param data_random A vector with the data of the random effects covariates.
@@ -128,5 +128,6 @@ sema_fit_one <- function(data_fixed,
   if(print){
     print(summary_sema(x = theta))
   }
-  return(list(unit = theta_j, model = theta))
+  final <- list(unit = theta_j, model = theta)
+  return(final)
 }

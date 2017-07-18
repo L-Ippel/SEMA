@@ -10,13 +10,13 @@ test_data <- build_dataset(n = 1500,
                            resid_sd = 2)
 
 
-check <- sema_fit_df(formula = y ~ V2 + V3 + V4 + V5 + V6 + (V2 + V4 + V5 | id), 
-                     data_frame = test_data,intercept = TRUE)
+check <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V3 | id), 
+                     data_frame = test_data, intercept = TRUE)
 
 test_that("sema_fit_df fits a simple model ",
 {
   expect_is(check, "list")
-  expect_length(check, 2)
+  expect_length(check, 3)
   expect_equal(sum(is.na(check$model)), 0)
   expect_equal(sum(is.na(check$unit)), 0)
 })
@@ -43,7 +43,6 @@ test_that("sema_fit_set fits a simple model ",
 
 
 id_records		     <- list(NA)
-class(id_records)  <- c("list", "sema")
 id_vector		       <- c()
 check3                <- NULL
 print              <- FALSE
@@ -78,3 +77,5 @@ test_that("sema_fit_one fits a simple model ",
             expect_equal(sum(is.na(check3$model)), 0)
             expect_equal(sum(is.na(check3$unit)), 0)
           })
+
+

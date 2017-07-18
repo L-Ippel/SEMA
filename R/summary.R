@@ -5,7 +5,7 @@
 #' @param x Sema output which should be a list. 
 #' @return LOGICAL
 #' @export
-is_sema <- function(x){
+is.sema <- function(x){
   inherits(x, "sema")
 }
 
@@ -23,9 +23,9 @@ is_sema <- function(x){
 #'   of the updated model parameters every X data points. 
 #' @param x A sema model output.
 #' @keywords summary model sema
-#' @seealso \code{\link{sema_store_fixed_coef}}, 
-#'    \code{\link{sema_store_random_var}}, \code{\link{sema_store_resid_var}}, 
-#'    \code{\link{sema_ranef}}
+#' @seealso \code{\link{store_fixed_coef}}, 
+#'    \code{\link{store_random_var}}, \code{\link{store_resid_var}}, 
+#'    \code{\link{ranef}}
 #' @return A list with sample size, number of units, the coefficients of the
 #'   fixed effects, the variance of the random effects and the residual
 #'   variance.
@@ -34,11 +34,11 @@ summary_sema <- function(x){
   if(is.null(x$model) & !is.null(x$n)){
     x$model <- x
   }
-  if(!is_sema(x) & !is_sema(x$model)){
+  if(!is.sema(x) & !is.sema(x$model)){
     stop("this object is not sema output")
   }
   sema_overview   <- list()
-
+  if(!is.null(x$formula)){sema_overview$formula <- x$formula}
   sema_overview$sample_size        <- x$model$n
   sema_overview$number_of_units    <- x$model$j
 
@@ -57,11 +57,34 @@ summary_sema <- function(x){
   return(sema_overview)
 }
 
+setMethod('summary', "sema",
+          function(object, ...) {
+            sema_overview   <- list()
+            if(!is.null(x$formula)){sema_overview$formula <- x$formula}
+            sema_overview$sample_size        <- x$model$n
+            sema_overview$number_of_units    <- x$model$j
+            
+            sema_overview$fixed_coef         <- as.numeric(x$model$fixed_coef_hat)
+            sema_overview$var_random_effects <- diag(x$model$random_var_hat)
+            n_random                         <- length( 
+              sema_overview$var_random_effects)
+            
+            x$model$random_var_hat[upper.tri(
+              x$model$random_var_hat, diag = T)] <- NA
+            
+            sema_overview$cov_random_effects <- as.table(x$model$random_var_hat)
+            dimnames(sema_overview$cov_random_effects) <- list(
+              1:n_random, 1:n_random)
+            
+            sema_overview$residual_var       <- x$model$resid_var_hat
+          }          
+)
+summary.sema<-summary_sema
 #' Extract the random effects coefficients. 
 #' 
 #' @description This function loops over the list with unit parameters and 
 #'   returns a dataframe with the random coefficients, centered around zero.
-#' @details The \code{sema_ranef} function works similar to lme4's 
+#' @details The \code{ranef} function works similar to lme4's 
 #'   \code{ranef}. The function uses \code{ldply} function from the 
 #'   \code{plyr} package to extract all coefficients. 
 #' @param x The sema output, a list with unit parameters.
@@ -69,10 +92,11 @@ summary_sema <- function(x){
 #' @keywords coefficients model 
 #' @return A data frame with random effect coefficients per unit, sorted by
 #'   entry.
-sema_ranef <- function(x){
-  if(!is_sema(x)){
+ranef <- function(x){
+  if(!is.sema(x)){
     stop("this object is not sema output")
   }
+  if(!is.null(x$unit)) {x <- x$unit}
   ranef_df <- plyr::ldply(.data = x, .fun = function(x){
     return(as.numeric(rbind(x$id, x$random_coef)))
   })
@@ -80,22 +104,36 @@ sema_ranef <- function(x){
   return(ranef_df)
 }
 
+#' Extract the fixed effects coefficients. 
+#' 
+#' @description This function returns the estimated fixed coefficients.
+#' @param x The sema output, a list with unit parameters.
+#' @export
+#' @keywords coefficients model 
+#' @return A data frame with fixed effect coefficients.
+fixef <- function(x){
+  if(!is.sema(x)){
+    stop("this object is not sema output")
+  }
+  return(data.frame("fixed coefficients" = x$model$fixed_coef_hat))
+}
 #' Store fixed effects coefficients
 #' 
 #' @description This function extracts the fixed effects coefficients and saves
 #'   them in a data frame with the number of data points seen so far. 
 #' 
-#' @seealso \code{\link{sema_ranef}}, \code{\link{sema_store_random_var}}, 
-#'   \code{\link{sema_store_resid_var}}
-#' @param sema_model The sema output, a list containing the model parameters.
+#' @seealso \code{\link{ranef}}, \code{\link{store_random_var}}, 
+#'   \code{\link{store_resid_var}}
+#' @param object The sema output, a list containing the model parameters.
 #' @keywords save coefficients
 #' @export
 #' @return A data frame with the number of observations and the fixed effects
 #'   coefficients
-sema_store_fixed_coef <- function(sema_model){
-  sema_coef_fixed <- matrix(c(sema_model$n,
-                              as.numeric(sema_model$fixed_coef_hat)),
-                            nrow = 1)
+store_fixed_coef <- function(object){
+  sema_coef_fixed <- data.frame(matrix(c(object$model$n,
+                              as.numeric(object$model$fixed_coef_hat)),
+                            nrow = 1))
+  names(sema_coef_fixed) <- c("n", 1:(ncol(sema_coef_fixed)-1))
   return(sema_coef_fixed)
 }
 
@@ -104,18 +142,20 @@ sema_store_fixed_coef <- function(sema_model){
 #' @description This function extracts the variance of the random effects and 
 #' saves them in a data frame with the number of data points seen so far. 
 #' 
-#' @seealso \code{\link{sema_ranef}}, \code{\link{sema_store_fixed_coef}}, 
-#'   \code{\link{sema_store_resid_var}}
-#' @param sema_model The sema output, a list containing the model parameters.
+#' @seealso \code{\link{ranef}}, \code{\link{fixef}}, 
+#'   \code{\link{store_fixed_coef}}, 
+#'   \code{\link{store_resid_var}}
+#' @param object The sema output, a list containing the model parameters.
 #' @export
 #' @keywords save coefficients
 #' @return A data frame with the number of observations and the random effects
 #'   variance.
-sema_store_random_var <- function(sema_model){
-  sema_coef_random <- as.data.frame(
-                        matrix(c(sema_model$n,
-                                 as.numeric(diag(sema_model$random_var_hat))),
+store_random_var <- function(object){
+  sema_coef_random <- data.frame(
+                        matrix(c(object$model$n,
+                                 as.numeric(diag(object$model$random_var_hat))),
                         nrow = 1))
+  names(sema_coef_random) <- c("n", 1:(ncol(sema_coef_random)-1))
   return(sema_coef_random)
 }
 
@@ -124,17 +164,20 @@ sema_store_random_var <- function(sema_model){
 #' @description This function extracts the residual variance and saves
 #'   it in a data frame with the number of data points seen so far. 
 #' 
-#' @seealso \code{\link{sema_ranef}}, \code{\link{sema_store_fixed_coef}},
-#'  \code{\link{sema_store_random_var}} 
-#' @param sema_model The sema output, a list containing the model parameters.
+#' @seealso \code{\link{ranef}}, \code{\link{store_fixed_coef}},
+#'  \code{\link{store_random_var}} 
+#' @param object The sema output, a list containing the model parameters.
 #' @export
 #' @keywords save coefficients
 #' @return A data frame with the number of observations and the residual
 #'   variance.
-sema_store_resid_var <- function(sema_model){
-  sema_resid_var <- as.data.frame(
-    matrix(c(sema_model$n,
-             as.numeric(sema_model$resid_var_hat)),
+store_resid_var <- function(object){
+  sema_resid_var <- data.frame(
+    matrix(c(object$model$n,
+             as.numeric(object$model$resid_var_hat)),
            nrow = 1))
+  names(sema_resid_var) <- c("n", "resid-var")
+  
   return(sema_resid_var)
 }
+
