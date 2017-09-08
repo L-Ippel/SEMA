@@ -17,6 +17,25 @@ A data frame with the number of observations and the fixed effects
 This function extracts the fixed effects coefficients and saves
   them in a data frame with the number of data points seen so far.
 }
+\examples{
+## First we create a dataset, consisting of 2500 observations from 20 
+## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+## variance of the random effects equals 1, 4, and 9. Lastly the 
+## residual variance equals 4:
+  
+test_data <- build_dataset(n = 2500, 
+                           j = 20, 
+                           fixed_coef = 1:5, 
+                           random_coef_sd = 1:3, 
+                           resid_sd = 2)
+                           
+## Next, we fit a simple model to these data                           
+m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+                    data_frame = test_data, 
+                    intercept = TRUE)
+## to subtract the fixed effects from the m1 object:
+store_fixed_coef(m1)
+}
 \seealso{
 \code{\link{ranef}}, \code{\link{store_random_var}}, 
   \code{\link{store_resid_var}}

@@ -28,3 +28,12 @@ A list containing the following objects per individual:
 \description{
 This function creates a list with objects required at the unit level
 }
+\examples{
+## We create a list with objects used by the sema_fit functions
+## when this function is used outside the sema_fit functions, ids, 
+## which is the identifying label must be given 
+ 
+unit_statistics <- build_theta_j(n_fixed = 5,
+                                  n_random = 3,
+                                  ids = 1)
+}

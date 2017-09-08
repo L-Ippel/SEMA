@@ -7,7 +7,24 @@
 store_random_var(object)
 }
 \arguments{
-\item{object}{The sema output, a list containing the model parameters.}
+\item{object}{The sema output, a list containing the model parameters.
+## First we create a dataset, consisting of 2500 observations from 20 
+## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+## variance of the random effects equals 1, 4, and 9. Lastly the 
+## residual variance equals 4:
+  
+test_data <- build_dataset(n = 2500, 
+                           j = 20, 
+                           fixed_coef = 1:5, 
+                           random_coef_sd = 1:3, 
+                           resid_sd = 2)
+                           
+## Next, we fit a simple model to these data                           
+m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+                    data_frame = test_data, 
+                    intercept = TRUE)
+## to subtract the variance of the random effects from the m1 object:
+store_random_var(m1)}
 }
 \value{
 A data frame with the number of observations and the random effects

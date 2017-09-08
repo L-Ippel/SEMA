@@ -57,6 +57,23 @@ The function creates a list with objects used by the sema
   function also requires the weight of those start values, 
   when no starting values are given default values are used.
 }
+\examples{
+## Create a list of objects required to fit the multilevel model using
+## sema:
+## NOTE: default start values fixed effect coefficients, residual variance 
+## and random effects variance is equal to 1. When this function is used 
+## outside the sema_fit functions, prior_n and prior_j, i.e., weight given 
+## to the start values should be entered. Within the sema_fit functions 
+## defaults are given. 
+
+model_statistics <- create_theta_main(n_fixed = 5,
+                                      n_random = 3,
+                                      start_resid_var = 1,
+                                      start_random_var = 1,
+                                      start_fixed_coef = NULL,
+                                      prior_n = 0,
+                                      prior_j = 0)
+}
 \keyword{fitting}
 \keyword{method}
 \keyword{model}

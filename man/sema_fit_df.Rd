@@ -67,6 +67,21 @@ This function fits the multilevel models online, or row-by-row
   function fits the multilevel model on a data set and it uses 
   \code{formula}.
 }
+\examples{
+## First we create a dataset, consisting of 2500 observations from 20 
+## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+## variance of the random effects equals 1, 4, and 9. Lastly the 
+## residual variance equals 4:
+test_data <- build_dataset(n = 1500, 
+                           j = 200, 
+                           fixed_coef = 1:5, 
+                           random_coef_sd = 1:3, 
+                           resid_sd = 2)
+                           
+## fit a multilevel model: 
+m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5  | id), 
+                   data_frame = test_data, intercept = TRUE)
+}
 \keyword{models}
 \keyword{multilevel}
 \keyword{online}
