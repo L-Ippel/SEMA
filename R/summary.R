@@ -8,7 +8,7 @@
 is.sema <- function(x){
   inherits(x, "sema")
 }
-
+       
 #' Interpreting sema output
 #' 
 #' @description Returns a list with the current model parameter estimates
@@ -30,6 +30,23 @@ is.sema <- function(x){
 #'   fixed effects, the variance of the random effects and the residual
 #'   variance.
 #' @export
+#' @examples
+#' ## First we create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#'   
+#' test_data <- build_dataset(n = 2500, 
+#'                            j = 20, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
+#'                            
+#' ## Next, we fit a simple model to these data                           
+#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+#'                     data_frame = test_data, 
+#'                     intercept = TRUE)
+#' summary_sema(m1)
 summary_sema <- function(x){
   if(is.null(x$model) & !is.null(x$n)){
     x$model <- x
@@ -80,6 +97,7 @@ setMethod('summary', "sema",
       }          
 )
 summary.sema <- summary_sema
+
 #' Extract the random effects coefficients. 
 #' 
 #' @description This function loops over the list with unit parameters and 
@@ -89,6 +107,23 @@ summary.sema <- summary_sema
 #'   \code{plyr} package to extract all coefficients. 
 #' @param x The sema output, a list with unit parameters.
 #' @export
+#' @examples
+#' ## First we create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#'   
+#' test_data <- build_dataset(n = 2500, 
+#'                            j = 20, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
+#'                            
+#' ## Next, we fit a simple model to these data                           
+#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+#'                     data_frame = test_data, 
+#'                     intercept = TRUE)
+#' ranef(m1)
 #' @keywords coefficients model 
 #' @return A data frame with random effect coefficients per unit, sorted by
 #'   entry.
@@ -109,6 +144,23 @@ ranef <- function(x){
 #' @description This function returns the estimated fixed coefficients.
 #' @param x The sema output, a list with unit parameters.
 #' @export
+#' @examples
+#' ## First we create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#'   
+#' test_data <- build_dataset(n = 2500, 
+#'                            j = 20, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
+#'                            
+#' ## Next, we fit a simple model to these data                           
+#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+#'                     data_frame = test_data, 
+#'                     intercept = TRUE)
+#' fixef(m1)
 #' @keywords coefficients model 
 #' @return A data frame with fixed effect coefficients.
 fixef <- function(x){
@@ -126,6 +178,25 @@ fixef <- function(x){
 #'   \code{\link{store_resid_var}}
 #' @param object The sema output, a list containing the model parameters.
 #' @keywords save coefficients
+#' @examples
+#' ## First we create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#'   
+#' test_data <- build_dataset(n = 2500, 
+#'                            j = 20, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
+#'                            
+#' ## Next, we fit a simple model to these data                           
+#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+#'                     data_frame = test_data, 
+#'                     intercept = TRUE)
+#' ## to subtract the fixed effects from the m1 object:
+#' store_fixed_coef(m1)
+
 #' @export
 #' @return A data frame with the number of observations and the fixed effects
 #'   coefficients
@@ -146,6 +217,23 @@ store_fixed_coef <- function(object){
 #'   \code{\link{store_fixed_coef}}, 
 #'   \code{\link{store_resid_var}}
 #' @param object The sema output, a list containing the model parameters.
+#' ## First we create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#'   
+#' test_data <- build_dataset(n = 2500, 
+#'                            j = 20, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
+#'                            
+#' ## Next, we fit a simple model to these data                           
+#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+#'                     data_frame = test_data, 
+#'                     intercept = TRUE)
+#' ## to subtract the variance of the random effects from the m1 object:
+#' store_random_var(m1)
 #' @export
 #' @keywords save coefficients
 #' @return A data frame with the number of observations and the random effects
@@ -168,6 +256,24 @@ store_random_var <- function(object){
 #'  \code{\link{store_random_var}} 
 #' @param object The sema output, a list containing the model parameters.
 #' @export
+#' @examples 
+#' ## First we create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#'   
+#' test_data <- build_dataset(n = 2500, 
+#'                            j = 20, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
+#'                            
+#' ## Next, we fit a simple model to these data                           
+#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5 | id), 
+#'                     data_frame = test_data, 
+#'                     intercept = TRUE)
+#' ## to subtract the residual variance from the m1 object:
+#' store_resid_var(m1)
 #' @keywords save coefficients
 #' @return A data frame with the number of observations and the residual
 #'   variance.

@@ -44,6 +44,61 @@
 #'   the fixed effects, default is 0.
 #' @keywords online multilevel models method fitting stream
 #' @export
+#' @examples 
+#' ## First we create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#' 
+#' test_data <- build_dataset(n = 1500, 
+#'                            j = 200, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
+#'                            
+#' ## to simplify the indexing, we generate 2 vectors, one that indicates which
+#' ## columns are fixed effects variables and the other to indicate in which
+#' ## columns the random effects variables are
+#'  
+#' data_fixed_var <- c(3:7)
+#' data_random_var <- c(3,5,6)
+#' 
+#' ## a list where the unit output of fit_sema is stored 
+#' id_records <- list(NA)
+#' 
+#' ## a vector which contains all observed units
+#' id_vector <- c()
+#' 
+#' ## an object where fit_sema output is stored in, this should be \code{NULL}
+#' ## because that tells the fit_sema function to create model statistics lists 
+#' 
+#' m1 <- NULL
+#' 
+#' ## the user can decide when output is printed to the console 
+#' print <- FALSE
+#' 
+#' ## mimic a data stream: 
+#' for(i in 1:nrow(test_data)){
+#'   id <- test_data$id[i]
+#'   if(!is.element(id, id_vector)){
+#'     id_vector		 <- c(id_vector, id)
+#'     temp_id			 <- which(id_vector == id)
+#'     id_suff_stat <- NULL
+#'   }
+#'   else{
+#'     temp_id		   <- which(id_vector == id)
+#'     id_suff_stat <- id_records[[temp_id]]
+#'   }
+#'   m1	<- sema_fit_one(data_fixed = as.numeric(test_data[i, data_fixed_var]),
+#'                     data_random = as.numeric(test_data[i, data_random_var]),
+#'                     data_y      = test_data$y[i],
+#'                     theta       = m1$model,
+#'                     theta_j     = id_suff_stat,
+#'                     id          = test_data$id[i],
+#'                     print       = print)
+#'                     
+#'  id_records[[temp_id]]	<- m1$unit
+#' }
 #' @return A list with a list with updated unit level parameters for one unit
 #'   and a list with updated global parameters.
 

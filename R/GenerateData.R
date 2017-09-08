@@ -26,6 +26,17 @@
 #'   level 1.
 #' @keywords  multilevel dataset
 #' @export
+#' @examples
+#' ## We create a dataset, consisting of 2500 observations from 20 
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' ## residual variance equals 4:
+#'   
+#' test_data <- build_dataset(n = 2500, 
+#'                            j = 20, 
+#'                            fixed_coef = 1:5, 
+#'                            random_coef_sd = 1:3, 
+#'                            resid_sd = 2)
 #' @return A data frame with variable \code{id}, which labels the units,
 #'   \code{y} is the outcome or dependent variable and covariates.
 

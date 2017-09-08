@@ -26,6 +26,22 @@
 #'  fixed effects coefficients and random effects variance.
 #' @keywords model method start sema fitting
 #' @export
+#' @examples 
+#' ## Create a list of objects required to fit the multilevel model using
+#' ## sema:
+#' ## NOTE: default start values fixed effect coefficients, residual variance 
+#' ## and random effects variance is equal to 1. When this function is used 
+#' ## outside the sema_fit functions, prior_n and prior_j, i.e., weight given 
+#' ## to the start values should be entered. Within the sema_fit functions 
+#' ## defaults are given. 
+#' 
+#' model_statistics <- create_theta_main(n_fixed = 5,
+#'                                       n_random = 3,
+#'                                       start_resid_var = 1,
+#'                                       start_random_var = 1,
+#'                                       start_fixed_coef = NULL,
+#'                                       prior_n = 0,
+#'                                       prior_j = 0)
 #' @return A list which contains: the fixed effects coefficients, 
 #'    \code{fixed_coef_hat}; the Complete Data Sufficient Statistic of the 
 #'    fixed effects, \code{t1}; the variance of the random effects 
