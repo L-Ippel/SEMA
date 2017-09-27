@@ -39,7 +39,7 @@ The \code{SEMA} package allows one to fit online, or in a data stream,
     variance of the random effects. 
   \item \code{\link{store_resid_var}}: stores the estimate of residual 
     variance coefficients 
-  \item \code{\link{summary}}: returns a list with the number of 
+  \item \code{\link{summary_sema}}: returns a list with the number of 
     units, number of observations, estimates of the fixed effects 
     coefficients, estimates of the variance of the random effects and the 
     estimate of the residual variance 
