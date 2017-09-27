@@ -65,7 +65,7 @@ create_theta_main <- function(n_fixed,
                               prior_n,
                               prior_j){
   theta        <- list()
-
+  class(theta) <- c("list", "sema")
   theta$fixed_coef_hat  <- start_fixed_coef
   theta$t1	            <- start_fixed_coef * prior_j
 

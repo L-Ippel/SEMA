@@ -115,7 +115,7 @@ sema_fit_df <- function(formula,
     data_random_df <- cbind(1, data_frame[, random_covar])
   }
   if(intercept == TRUE){
-    data_fixed_df  <- data_frame[, fixed_covar]
+    data_fixed_df  <- as.data.frame(data_frame[, fixed_covar])
     data_random_df <- as.data.frame(data_frame[, random_covar])
     if(data_fixed_df[1, 1] != 1){
       stop("first column should be intercept, check whether

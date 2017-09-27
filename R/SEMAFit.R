@@ -184,5 +184,6 @@ sema_fit_one <- function(data_fixed,
     print(summary_sema(x = theta))
   }
   final <- list(unit = theta_j, model = theta)
+  class(final) <- c("list", "sema")
   return(final)
 }

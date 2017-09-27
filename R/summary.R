@@ -74,30 +74,6 @@ summary_sema <- function(x){
   return(sema_overview)
 }
 
-setMethod('summary', "sema",
-      function(object, ...) {
-        sema_overview   <- list()
-        if(!is.null(object$formula)){sema_overview$formula <- object$formula}
-        sema_overview$sample_size        <- object$model$n
-        sema_overview$number_of_units    <- object$model$j
-            
-        sema_overview$fixed_coef    <- as.numeric(object$model$fixed_coef_hat)
-        sema_overview$var_random_effects <- diag(object$model$random_var_hat)
-        n_random                         <- length( 
-           sema_overview$var_random_effects)
-            
-        object$model$random_var_hat[upper.tri(
-              object$model$random_var_hat, diag = T)] <- NA
-            
-        sema_overview$cov_random_effects <- as.table(object$model$random_var_hat)
-        dimnames(sema_overview$cov_random_effects) <- list(
-              1:n_random, 1:n_random)
-            
-        sema_overview$residual_var       <- object$model$resid_var_hat
-      }          
-)
-summary.sema <- summary_sema
-
 #' Extract the random effects coefficients. 
 #' 
 #' @description This function loops over the list with unit parameters and 

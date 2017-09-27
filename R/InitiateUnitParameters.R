@@ -28,6 +28,7 @@ build_theta_j <- function(n_fixed,
                           n_random,
                           ids){
   theta_j             <- list()
+  class(theta_j) <- c("list", "sema")
   theta_j$id          <- ids
   theta_j$n_j         <- 0
   theta_j$random_coef <- rep(0, n_random)

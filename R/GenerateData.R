@@ -67,19 +67,21 @@ build_dataset <- function(n,
   level_2_data   <- level_2_data_j[ids, ]
 
   dataset        <- as.data.frame(cbind(id = ids, level_2_data[, -1]))
-   temp	         <- matrix(nrow = n, ncol = n_level_1)
+  if(n_level_1 > 0){
+    temp	         <- matrix(nrow = n, ncol = n_level_1)
 
-  if(length(mean_fixed_level_1) == 1){ 
-    mean_fixed_level_1 <- rep(mean_fixed_level_1, n_level_1)
-    sd_fixed_level_1 <- rep(sd_fixed_level_1, n_level_1)
-  }
-    for(t in 1:n_level_1){
-      dataset[, (1 + dim(dataset)[2])] <- temp[, t]	<- stats::rnorm(
-                                                       n,
-                                                       mean_fixed_level_1[t],
-                                                       sd_fixed_level_1[t])
+    if(length(mean_fixed_level_1) == 1){ 
+      mean_fixed_level_1 <- rep(mean_fixed_level_1, n_level_1)
+      sd_fixed_level_1 <- rep(sd_fixed_level_1, n_level_1)
     }
-    dataset	  <- cbind(dataset, "z0" = 1, temp[, 1:(n_random_var - 1)])
+      for(t in 1:n_level_1){
+        dataset[, (1 + dim(dataset)[2])] <- temp[, t]	<- stats::rnorm(
+                                                         n,
+                                                         mean_fixed_level_1[t],
+                                                         sd_fixed_level_1[t])
+      }
+      dataset	  <- cbind(dataset, "z0" = 1, temp[, 1:(n_random_var - 1)])
+  }
     dataset$y	<- rowSums(dataset[, -1] * coef_dataset) + stats::rnorm(n, 0, 
                                                                       resid_sd)
     dataset   <- dataset[, c(1, dim(dataset)[2], 2:(1 + n_fixed_var))]
