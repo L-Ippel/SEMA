@@ -7,7 +7,9 @@ The function is written such that you only have to add the new incoming data and
 
 The SEMA package can be installed and used as follows: 
 
+```
 library(devtools)	
 install_github(“L-Ippel/SEMA”)
 library(SEMA)
 ?SEMA
+```
