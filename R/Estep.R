@@ -101,7 +101,7 @@ compute_t3_j <- function(parameters_j,
            sum(random_coef_sq_matrix * parameters_j$z_sq) -
            2 * sum(t(fixed_coef) * parameters_j$xy) -
            2 * sum(random_coef * parameters_j$zy) +
-           2 * sum(parameters_j$zx * fixed_random_coef_matrix) +
+           2 * sum(parameters_j$zx_mat * fixed_random_coef_matrix) +
            resid_var * sum(diag(parameters_j$c_inv %*% parameters_j$z_sq)))
 }
 
