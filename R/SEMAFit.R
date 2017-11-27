@@ -61,7 +61,7 @@
 #' ## columns the random effects variables are
 #'  
 #' data_fixed_var <- c(3:7)
-#' data_random_var <- c(3,5,6)
+#' data_random_var <- c(3)
 #' 
 #' ## a list where the unit output of fit_sema is stored 
 #' id_records <- list(NA)
@@ -147,7 +147,7 @@ sema_fit_one <- function(data_fixed,
   theta$y	        <- update_average(old = theta$y, obs = data_y, n = theta$n)
 
   theta_j$c_inv	<- compute_c_inv(z_sq       = theta_j$z_sq,
-                                 resid_var  = theta$resid_var_hat,
+                                 resid_var  = as.numeric(theta$resid_var_hat),
                                  random_var = theta$random_var_hat)
 
   theta_j$random_coef	<- compute_random_coef(c_inv      = theta_j$c_inv,

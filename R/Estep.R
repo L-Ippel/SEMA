@@ -34,7 +34,7 @@ compute_random_coef <- function(c_inv,
                                 fixed_coef,
                                 zy,
                                 zx){
-  return(c_inv %*% (t(zy) - t(zx) %*% fixed_coef))
+  return(c_inv %*% (zy - t(zx) %*% fixed_coef))
 }
 
 #' compute_t1_j computes the individual contribution to the
@@ -64,7 +64,7 @@ compute_t1_j <- function(zx,
 compute_t2_j <- function(random_coef,
                          resid_var,
                          c_inv){
-  return(random_coef %*% t(random_coef) + resid_var * c_inv)
+  return(random_coef %*% t(random_coef) + as.numeric(resid_var) * c_inv)
 }
 
 #' compute_t3_j computes the individual contribution to the complete data
@@ -93,15 +93,12 @@ compute_t3_j <- function(parameters_j,
                          random_coef,
                          fixed_coef,
                          resid_var){
-  fixed_coef_sq_matrix     <- fixed_coef %*% t(fixed_coef)
-  fixed_random_coef_matrix <- fixed_coef %*% random_coef
-  random_coef_sq_matrix    <- t(random_coef) %*% random_coef
   return(parameters_j$y_sq +
-           sum(fixed_coef_sq_matrix * parameters_j$x_sq) +
-           sum(random_coef_sq_matrix * parameters_j$z_sq) -
-           2 * sum(t(fixed_coef) * parameters_j$xy) -
-           2 * sum(random_coef * parameters_j$zy) +
-           2 * sum(parameters_j$zx_mat * fixed_random_coef_matrix) +
+           t(fixed_coef) %*% parameters_j$x_sq %*% fixed_coef +
+           t(random_coef) %*% parameters_j$z_sq %*%random_coef -
+           2 * parameters_j$xy %*% fixed_coef -
+           2 * t(parameters_j$zy) %*% random_coef +
+           2 * t(fixed_coef) %*% parameters_j$zx_mat %*% random_coef +
            resid_var * sum(diag(parameters_j$c_inv %*% parameters_j$z_sq)))
 }
 
@@ -129,7 +126,7 @@ online_e_step <- function(theta_main,
 
   theta_main$t3	<- theta_main$t3 - theta_id$t3_j
   theta_id$t3_j	<- compute_t3_j(parameters_j = theta_id,
-                                random_coef  = t(theta_id$random_coef),
+                                random_coef  = theta_id$random_coef,
                                 fixed_coef   = theta_main$fixed_coef_hat,
                                 resid_var    = theta_main$resid_var_hat)
   theta_main$t3	<- theta_main$t3 + theta_id$t3_j

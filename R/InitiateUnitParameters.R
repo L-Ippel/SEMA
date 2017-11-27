@@ -38,7 +38,7 @@ build_theta_j <- function(n_fixed,
   theta_j$y_sq        <- 0
   theta_j$x_sq        <- matrix(0, n_fixed, n_fixed)
   theta_j$xy          <- rep(0, n_fixed)
-  theta_j$zy          <- rep(0, n_random)
+  theta_j$zy          <- matrix(0, nrow = n_random)
   theta_j$t1_j        <- rep(0, n_fixed)
   theta_j$t2_j        <- matrix(0, nrow = n_random, ncol = n_random)
   theta_j$t3_j        <- 0

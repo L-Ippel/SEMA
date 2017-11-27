@@ -64,7 +64,7 @@ update_id <- function(parameters_id,
                                         part_a = data_fixed,
                                         part_b = t(data_random))
   parameters_id$zy		 <- update_product(old   = parameters_id$zy,
-                                       part_a  = data_y,
-                                       part_b  = data_random)
+                                       part_a  = as.matrix(data_random),
+                                       part_b  = data_y)
   return(parameters_id)
 }
