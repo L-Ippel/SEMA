@@ -82,7 +82,7 @@ test_data <- build_dataset(n = 1500,
 ## columns the random effects variables are
  
 data_fixed_var <- c(3:7)
-data_random_var <- c(3,5,6)
+data_random_var <- c(3)
 
 ## a list where the unit output of fit_sema is stored 
 id_records <- list(NA)

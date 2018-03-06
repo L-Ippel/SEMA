@@ -103,7 +103,7 @@ create_theta_main <- function(n_fixed,
 #'   effects variance.
 #' @return If theta is a list, it returns theta as it was supplied, else
 #'   a list with needed objects is returned.
-#'
+
 try_theta <- function(theta,
                       n_fixed,
                       n_random,
