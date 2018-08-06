@@ -4,9 +4,9 @@
 \alias{build_dataset}
 \title{Generate a multilevel long-form data frame}
 \usage{
-build_dataset(n, j, fixed_coef, random_coef_sd, resid_sd, n_level_2_var = 2,
-  mean_fixed_level_2 = 0, sd_fixed_level_2 = 1, mean_fixed_level_1 = 0,
-  sd_fixed_level_1 = 1)
+build_dataset(n, j, fixed_coef, random_coef_sd, resid_sd,
+  n_level_2_var = 2, mean_fixed_level_2 = 0, sd_fixed_level_2 = 1,
+  mean_fixed_level_1 = 0, sd_fixed_level_1 = 1)
 }
 \arguments{
 \item{n}{Number of observations.}

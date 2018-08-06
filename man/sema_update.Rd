@@ -10,17 +10,21 @@ sema_update(theta_jList, theta, J = theta$j, n = theta$n)
 \item{theta_jList}{A list with the objects for every known unit in the data.}
 
 \item{theta}{A list with all model objects.}
+
+\item{J}{A scalar with the number of units.}
+
+\item{n}{The total number of observations}
 }
 \description{
-Allow SEMA to run additional 'sweeps' over all units, during 
+Allow SEMA to run additional 'sweeps' over all units, during
 the data stream.
 }
 \details{
 This function can be used in combination with the
- \code{\link{sema_fit_one}}. In cases where either units do not return 
- in the data stream frequently, or when the data generating process 
+ \code{\link{sema_fit_one}}. In cases where either units do not return
+ in the data stream frequently, or when the data generating process
  gradually changes, additional sweeps or updates where the required objects
- are updated for all units, instead of only for the most recently entered 
+ are updated for all units, instead of only for the most recently entered
  unit.
 }
 \keyword{fitting}

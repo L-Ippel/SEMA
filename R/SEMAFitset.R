@@ -1,22 +1,22 @@
 #' Fit multilevel models in a data stream II
-#'  
-#' @description Fit multilevel models in a data stream, without managing units' 
-#'   objects lists, 
+#'
+#' @description Fit multilevel models in a data stream, without managing units'
+#'   objects lists,
 #'
 #' @details This function fits the multilevel models in a data stream, similar
 #'   to \code{\link{sema_fit_one}}. However, while \code{\link{sema_fit_one}}
-#'   does not manage the storage and retrieval of units' objects, this 
-#'   function does, which makes this function more user-friendly. 
+#'   does not manage the storage and retrieval of units' objects, this
+#'   function does, which makes this function more user-friendly.
 #'   The function requires an id label, to retrieve the corresponding unit's
-#'   parameters, a vector with the data of the fixed effects covariates, a 
-#'   vector with the data of the random effects covariates, the response or 
-#'   dependent variable and the current state of the model parameters, 
-#'   including the lists with the units' objects. Currently the algorithm  
+#'   parameters, a vector with the data of the fixed effects covariates, a
+#'   vector with the data of the random effects covariates, the response or
+#'   dependent variable and the current state of the model parameters,
+#'   including the lists with the units' objects. Currently the algorithm
 #'   fits models including fixed effects at level 1 and 2 and random intercepts
 #'   and slopes for continuous outcomes.
 #' @seealso \code{\link{sema_fit_one}}, \code{\link{sema_fit_df}},
 #' \code{\link{summary_sema}}, \code{\link{ranef}},
-#'   \code{\link{store_resid_var}}, \code{\link{store_random_var}}, 
+#'   \code{\link{store_resid_var}}, \code{\link{store_random_var}},
 #'   \code{\link{store_fixed_coef}}
 #'
 #' @param data_fixed A vector with the data of the fixed effects covariates.
@@ -29,7 +29,7 @@
 #'   all units parameters and contributions to the sufficient statistics. This
 #'   list is automatically generated.
 #' @param print The default is FALSE, if TRUE the function
-#'   prints a summary of the model.  
+#'   prints a summary of the model.
 #' @param start_resid_var A scalar, optional if the user wants to provide a
 #'   start value of the residual variance, default start value is 1.
 #' @param start_random_var A vector, optional if the user wants to provide a
@@ -48,35 +48,35 @@
 #'   effects, default is 0.
 #' @keywords online multilevel models method fitting stream
 #' @export
-#' @examples 
-#' ## First we create a dataset, consisting of 2500 observations from 20 
-#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
-#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' @examples
+#' ## First we create a dataset, consisting of 2500 observations from 20
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the
 #' ## residual variance equals 4:
-#' test_data <- build_dataset(n = 1500, 
-#'                            j = 200, 
-#'                            fixed_coef = 1:5, 
-#'                            random_coef_sd = 1:3, 
+#' test_data <- build_dataset(n = 1500,
+#'                            j = 200,
+#'                            fixed_coef = 1:5,
+#'                            random_coef_sd = 1:3,
 #'                            resid_sd = 2)
 #' ## to simplify the indexing, we generate 2 vectors, one that indicates which
 #' ## columns are fixed effects variables and the other to indicate in which
 #' ## columns the random effects variables are
-#' 
+#'
 #' data_fixed_var <- c(3:7)
 #' data_random_var <- c(3,5,6)
-#' 
+#'
 #' ## an object where fit_sema output is stored in, this should be \code{NULL}
-#' ## because that tells the fit_sema function to create model statistics lists 
-#' 
+#' ## because that tells the fit_sema function to create model statistics lists
+#'
 #' m1 <- NULL
-#' 
-#' ## looping though the dataset like this: 
+#'
+#' ## looping though the dataset like this:
 #' for(i in 1:nrow(test_data)){
 #' m1 <- sema_fit_set(data_fixed = test_data[i, data_fixed_var],
 #'                    data_random = test_data[i, data_random_var],
 #'                    data_y = test_data$y[i],
 #'                    id = test_data$id[i],
-#'                    theta_list = m1, 
+#'                    theta_list = m1,
 #'                    print = FALSE)
 #' }
 
@@ -84,7 +84,7 @@
 #'   and a list with lists of all units parameters and contributions.
 
 
-sema_fit_set <- function(data_fixed,
+old_sema_fit_set <- function(data_fixed,
                          data_random,
                          data_y,
                          id,

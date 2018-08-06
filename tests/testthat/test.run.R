@@ -3,14 +3,12 @@ library(SEMA)
 
 context("running full SEMA algorithm")
 set.seed(653)
-test_data <- build_dataset(n = 1500, 
-                           j = 200, 
-                           fixed_coef = 1:5, 
-                           random_coef_sd = 1:3, 
+test_data <- build_dataset(n = 1500,
+                           j = 200,
+                           fixed_coef = 1:5,
+                           random_coef_sd = 1:3,
                            resid_sd = 2)
-
-
-check <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5  | id), 
+check <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5  | id),
                      data_frame = test_data, intercept = TRUE)
 
 test_that("sema_fit_df fits a simple model ",
@@ -21,7 +19,7 @@ test_that("sema_fit_df fits a simple model ",
   expect_equal(sum(is.na(check$unit)), 0)
 })
 
-check2 <- NULL 
+check2 <- NULL
 data_fixed_var <- c(3:7)
 data_random_var <- c(3)
 for(i in 1:nrow(test_data)){
@@ -29,7 +27,7 @@ for(i in 1:nrow(test_data)){
                          data_random = test_data[i, data_random_var],
                          data_y = test_data$y[i],
                          id = test_data$id[i],
-                         theta_list = check2, 
+                         theta_list = check2,
                          print = FALSE)
 }
 
@@ -44,7 +42,7 @@ test_that("sema_fit_set fits a simple model ",
 
 id_records		     <- list(NA)
 id_vector		       <- c()
-check3                <- NULL
+check3             <- NULL
 print              <- FALSE
 
 for(i in 1:nrow(test_data)){
@@ -58,7 +56,7 @@ for(i in 1:nrow(test_data)){
     temp_id		   <- which(id_vector == id)
     id_suff_stat <- id_records[[temp_id]]
   }
-  
+
   check3		<- sema_fit_one(data_fixed = as.numeric(test_data[i, data_fixed_var]),
                        data_random = as.numeric(test_data[i, data_random_var]),
                        data_y      = test_data$y[i],

@@ -1,17 +1,17 @@
 #' Fit multilevel models in a data stream III
-#' 
+#'
 #' @description Fit multilevel models online on a data set
 #'
 #' @details This function fits the multilevel models online, or row-by-row
-#'   on a data set. Similar to \code{\link{sema_fit_set}} and 
-#'   \code{\link{sema_fit_one}} the algorithm updates the model parameters a 
-#'   data point at a time. However, instead of these two functions, this 
-#'   function fits the multilevel model on a data set and it uses 
+#'   on a data set. Similar to \code{\link{sema_fit_set}} and
+#'   \code{\link{sema_fit_one}} the algorithm updates the model parameters a
+#'   data point at a time. However, instead of these two functions, this
+#'   function fits the multilevel model on a data set and it uses
 #'   \code{formula}.
-#'   
-#' @param formula A symbolic representation of the model, formula is used 
-#'   similar to lme4's \code{lmer}: 
-#'   \code{response ~ fixed effects + (random effects | grouping variable)} 
+#'
+#' @param formula A symbolic representation of the model, formula is used
+#'   similar to lme4's \code{lmer}:
+#'   \code{response ~ fixed effects + (random effects | grouping variable)}
 #' @param data_frame A data frame consisting of the variables mentioned in the
 #'   formula.
 #' @param intercept This indicates whether there is a column in data frame with
@@ -34,35 +34,42 @@
 #'   can create the vector of start values matching the number of fixed
 #'   effects. NOTE, if start values are provided make sure that the length of
 #'   the vector of start values matches the number of fixed effects.
-#' @param update The default is NULL, when an integer is provided 
+#' @param start_cor This is a starting value for the correlations between the
+#'   random effects.
+#' @param update The default is NULL, when an integer is provided
 #'   \code{\link{sema_update}} is called to do a full update to recompute all
-#'   contributions to the complete data suffient statistics. 
-#' @param train The default value is \code{NULL}, meaning that there SEMA is 
-#'   fit to the data without a training set. When a different value is 
-#'   provided, this indicate the first number of rows which are used for the 
-#'   training set. See \link{\code{emAlgorithm}} for a full description of 
-#'   training SEMA. 
+#'   contributions to the complete data suffient statistics.
+#' @param train The default value is \code{NULL}, meaning that there SEMA is
+#'   fit to the data without a training set. When a different value is
+#'   provided, this indicate the first number of rows which are used for the
+#'   training set. See \code{\link{emAlgorithm}} for a full description of
+#'   training SEMA.
+#' @param threshold In case of a training set, this thresholds determines
+#'   when the EM algorithm should terminate. When the parameter estimates
+#'   change less than this threshold, EM algorithm terminates.
+#' @param max_iter In case of a training set, you can fix the number of
+#'   iterations of the EM algorithm.
 #' @param prior_n If starting values are provided, prior_n determines the
 #'   weight of the starting value of the residual variance, default is 0.
 #' @param prior_j If starting values are provided, prior_j determins the weight
 #'   of the starting value of the variance of the random effects and the fixed
 #'   effects, default is 0.
-#'   
+#'
 #' @keywords online multilevel models
 #' @export
-#' @examples 
-#' ## First we create a dataset, consisting of 2500 observations from 20 
-#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
-#' ## variance of the random effects equals 1, 4, and 9. Lastly the 
+#' @examples
+#' ## First we create a dataset, consisting of 2500 observations from 20
+#' ## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The
+#' ## variance of the random effects equals 1, 4, and 9. Lastly the
 #' ## residual variance equals 4:
-#' test_data <- build_dataset(n = 1500, 
-#'                            j = 200, 
-#'                            fixed_coef = 1:5, 
-#'                            random_coef_sd = 1:3, 
+#' test_data <- build_dataset(n = 1500,
+#'                            j = 200,
+#'                            fixed_coef = 1:5,
+#'                            random_coef_sd = 1:3,
 #'                            resid_sd = 2)
-#'                            
-#' ## fit a multilevel model: 
-#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5  | id), 
+#'
+#' ## fit a multilevel model:
+#' m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5  | id),
 #'                    data_frame = test_data, intercept = TRUE)
 #' @return A list with updated global parameters (model),
 #'   a list with lists of all units parameters and contributions (unit),
@@ -80,7 +87,7 @@ sema_fit_df <- function(formula,
                         start_cor = .15,
                         update = NULL,
                         train = NULL,
-                        threshold = 0.0001, 
+                        threshold = 0.0001,
                         max_iter = 800,
                         prior_n = 0,
                         prior_j = 0){
@@ -91,26 +98,26 @@ sema_fit_df <- function(formula,
   n_var_form  <- length(var_vec)
   data_y_vec  <- data_frame[, match(var_vec[1], names(data_frame))]
   data_id_vec <- data_frame[, match(var_vec[n_var_form], names(data_frame))]
-  
+
   char_form   <- as.character(formula)[3]
   if(stringr::str_count(char_form, stringr::fixed("(")) > 1){
     stop("incorrect formula")
   }
-  temp_formula <- stringr::str_split(char_form, stringr::fixed("("), 
+  temp_formula <- stringr::str_split(char_form, stringr::fixed("("),
                                      simplify = T)
   temp_fixed   <- stringr::str_split(temp_formula[1], stringr::fixed(" + "),
                                      simplify = T)
   temp  <- stringr::str_split(temp_formula[2], stringr::fixed(" + "),
                               simplify = T)
-  
+
   if(ncol(temp)==1){
-    temp_random <- stringr::str_split(temp[, ncol(temp)], 
+    temp_random <- stringr::str_split(temp[, ncol(temp)],
                                       stringr::fixed(" | "),
                                       simplify = T)[1]
   }
   if(ncol(temp)!=1){
     temp_random  <- c(temp[1, 1:(ncol(temp) - 1)],
-                      stringr::str_split(temp[, ncol(temp)], 
+                      stringr::str_split(temp[, ncol(temp)],
                                          stringr::fixed(" | "),
                                          simplify = T)[1])
   }
@@ -137,7 +144,7 @@ sema_fit_df <- function(formula,
            order of the variables")
     }
   }
-  if(is.null(train)){ 
+  if(is.null(train)){
     id_records		     <- list(NA)
     class(id_records)  <- c("list", "sema")
     id_vector		       <- c()
@@ -146,21 +153,21 @@ sema_fit_df <- function(formula,
     start.sema         <- 1
   }
   if(!is.null(train)){
-    data <- as.data.frame(cbind("id" = data_id_vec[1:train], 
-                               "y"     = data_y_vec[1:train], 
+    data <- as.data.frame(cbind("id" = data_id_vec[1:train],
+                               "y"     = data_y_vec[1:train],
                                "intercept" = 1,
-                                data_frame[1:train, 
-                                  match(var_vec[2:(n_var_form-1)], 
+                                data_frame[1:train,
+                                  match(var_vec[2:(n_var_form-1)],
                                                   names(data_frame))]))
     fullEM <- emAlgorithm(data         = data,
                           id           = 1,
                           y            = 2,
                           start.fixed  = start_fixed_coef,
-                          start.random = start_random_var, 
+                          start.random = start_random_var,
                           data.random  = match(temp_random, names(data)),
-                          start.cor    = start_cor, 
+                          start.cor    = start_cor,
                           start.res    = start_resid_var,
-                          max.iter     = max_iter, 
+                          max.iter     = max_iter,
                           crit.value   = threshold)
     id_records		     <- fullEM$unit
     class(id_records)  <- c("list", "sema")
@@ -169,7 +176,7 @@ sema_fit_df <- function(formula,
     res$model          <- fullEM$model
     print              <- FALSE
     start.sema         <- train + 1
-    
+
   }
   if(!is.na(store_every)){
     length_store <- length(seq(store_every, nrow(data_frame), store_every))
@@ -203,16 +210,18 @@ sema_fit_df <- function(formula,
                          theta_j     = id_suff_stat,
                          id          = id,
                          print       = print)
-    if(!is.null(update) & update %% res$model$n ==0){
-      tempres <- sema_update(theta_jList = id_records,
+    if(!is.null(update)){
+      if(i %% update == 0){
+        tempres <- sema_update(theta_jList = id_records,
                          theta = res$model)
-      res$model <- tempres$model
-      id_records <- tempres$unit 
+        res$model <- tempres$model
+        id_records <- tempres$unit
+      }
     }
-      
+
     if( !is.na(print_every) &
         (res$model$n+1) %% print_every == 0) {print <- TRUE }
-    
+
     id_records[[temp_id]]	<- res$unit
     if(!is.na(store_every) & res$model$n %% store_every == 0){
       fixed_coef[res$model$n / store_every, ] <- store_fixed_coef(
@@ -223,18 +232,18 @@ sema_fit_df <- function(formula,
         object = res$model)
     }
   }
-  if(!is.na(store_every)){ 
+  if(!is.na(store_every)){
     names(fixed_coef) <- c("n", temp_fixed[, 1:(ncol(temp_fixed) - 1)])
     names(random_var) <- c("n", temp_random)
     names(resid_var)  <- c("n", "residual_variance")
-    
+
     final <- list("formula"       = formula,
                   "model"         = res$model,
                   "unit"          = id_records,
                   "fixed_coef_df" = fixed_coef,
                   "random_var_df" = random_var,
                   "resid_var_df"  = resid_var)
-  } 
+  }
   else{
     final <- list("formula"       = formula,
                   "model"         = res$model,

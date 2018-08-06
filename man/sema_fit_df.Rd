@@ -11,8 +11,8 @@ sema_fit_df(formula, data_frame = data.frame(), intercept = FALSE,
   prior_n = 0, prior_j = 0)
 }
 \arguments{
-\item{formula}{A symbolic representation of the model, formula is used 
-similar to lme4's \code{lmer}: 
+\item{formula}{A symbolic representation of the model, formula is used
+similar to lme4's \code{lmer}:
 \code{response ~ fixed effects + (random effects | grouping variable)}}
 
 \item{data_frame}{A data frame consisting of the variables mentioned in the
@@ -44,15 +44,25 @@ can create the vector of start values matching the number of fixed
 effects. NOTE, if start values are provided make sure that the length of
 the vector of start values matches the number of fixed effects.}
 
-\item{update}{The default is NULL, when an integer is provided 
+\item{start_cor}{This is a starting value for the correlations between the
+random effects.}
+
+\item{update}{The default is NULL, when an integer is provided
 \code{\link{sema_update}} is called to do a full update to recompute all
 contributions to the complete data suffient statistics.}
 
-\item{train}{The default value is \code{NULL}, meaning that there SEMA is 
-fit to the data without a training set. When a different value is 
-provided, this indicate the first number of rows which are used for the 
-training set. See \link{\code{emAlgorithm}} for a full description of 
+\item{train}{The default value is \code{NULL}, meaning that there SEMA is
+fit to the data without a training set. When a different value is
+provided, this indicate the first number of rows which are used for the
+training set. See \code{\link{emAlgorithm}} for a full description of
 training SEMA.}
+
+\item{threshold}{In case of a training set, this thresholds determines
+when the EM algorithm should terminate. When the parameter estimates
+change less than this threshold, EM algorithm terminates.}
+
+\item{max_iter}{In case of a training set, you can fix the number of
+iterations of the EM algorithm.}
 
 \item{prior_n}{If starting values are provided, prior_n determines the
 weight of the starting value of the residual variance, default is 0.}
@@ -72,25 +82,25 @@ Fit multilevel models online on a data set
 }
 \details{
 This function fits the multilevel models online, or row-by-row
-  on a data set. Similar to \code{\link{sema_fit_set}} and 
-  \code{\link{sema_fit_one}} the algorithm updates the model parameters a 
-  data point at a time. However, instead of these two functions, this 
-  function fits the multilevel model on a data set and it uses 
+  on a data set. Similar to \code{\link{sema_fit_set}} and
+  \code{\link{sema_fit_one}} the algorithm updates the model parameters a
+  data point at a time. However, instead of these two functions, this
+  function fits the multilevel model on a data set and it uses
   \code{formula}.
 }
 \examples{
-## First we create a dataset, consisting of 2500 observations from 20 
-## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The 
-## variance of the random effects equals 1, 4, and 9. Lastly the 
+## First we create a dataset, consisting of 2500 observations from 20
+## units. The fixed effects have the coefficients 1, 2, 3, 4, and 5. The
+## variance of the random effects equals 1, 4, and 9. Lastly the
 ## residual variance equals 4:
-test_data <- build_dataset(n = 1500, 
-                           j = 200, 
-                           fixed_coef = 1:5, 
-                           random_coef_sd = 1:3, 
+test_data <- build_dataset(n = 1500,
+                           j = 200,
+                           fixed_coef = 1:5,
+                           random_coef_sd = 1:3,
                            resid_sd = 2)
-                           
-## fit a multilevel model: 
-m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5  | id), 
+
+## fit a multilevel model:
+m1 <- sema_fit_df(formula = y ~ 1 + V3 + V4 + V5 + V6 + (1 + V4 + V5  | id),
                    data_frame = test_data, intercept = TRUE)
 }
 \keyword{models}

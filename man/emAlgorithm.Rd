@@ -6,15 +6,16 @@
 \usage{
 emAlgorithm(data, id, y, start.fixed = c(90, rnorm(13)),
   start.random = runif(5, 0, 4), data.random = c(3, 9:12),
-  start.cor = 0.15, start.res = 1, max.iter = 20, crit.value = 1e-04)
+  start.cor = 0.15, start.res = 1, max.iter = 20,
+  crit.value = 1e-04)
 }
 \arguments{
 \item{data}{A data frame}
 
-\item{id}{Integer, indicating in which column the grouping variable 
+\item{id}{Integer, indicating in which column the grouping variable
 can be found.}
 
-\item{y}{Integer, indicating in which column the dependent variable 
+\item{y}{Integer, indicating in which column the dependent variable
 can be found.}
 
 \item{start.fixed}{This is optional if the user wants to provide start
@@ -27,6 +28,9 @@ start values of the variance of the random effects covariates, default
 start value is 1. NOTE, if start values are provided make sure that the
 length of the vector of start values matches the number of random effects.}
 
+\item{data.random}{A vector with indexes of the variables treated as
+random.}
+
 \item{start.cor}{Start value for correlation between the random effects.}
 
 \item{start.res}{This is optional if the user wants to provide a start
@@ -35,11 +39,11 @@ value of the residual variance, default start value is 1.}
 \item{max.iter}{Integer, maximum number of iterations for EM algorithm.}
 
 \item{crit.value}{A threshold or stopping criterion, if the maximum change
-in parameter values from one iteration to the next is less than this 
+in parameter values from one iteration to the next is less than this
 value, the algorithm stops.}
 }
 \description{
-To provide SEMA with good starting values, it might help to 
+To provide SEMA with good starting values, it might help to
   use the first part of the data as a training set.
 }
 \details{
